@@ -1,5 +1,6 @@
 package com.tribal.creditlineapi.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,28 +36,41 @@ public class CreditLineServiceImpl implements CreditLineService{
         
        return creditLineDTO;
     }
-
+    
     @Override
-    public Boolean setCreditLine(CreditLineDTO creditLineDTO) {
+    public CreditLineDTO setCreditLine(CreditLineDTO creditLineDTO) {
+
+        CreditLineEntity lastCreditLine = creditLineDAO.findLast();
+
+        if(lastCreditLine != null && lastCreditLine.getAccepted()){
+            return CreditLineUtils.createCreditLineDTO(lastCreditLine);
+        }
 
         CreditLineEntity creditLineEntity = CreditLineUtils.createCreditLineEntity(creditLineDTO);
         
         creditLineEntity.setAccepted(CreditLineUtils.isCreditLineAccepeted(creditLineEntity));
-        
-        
-
-        //TODO: The accepted credit line will be the same regardless of the inputs
 
         if(creditLineEntity.getAccepted()){
-            //CreditLineUtils.updateRateLimits(RATER_LIMIT_NAME, NEW_LIMIT_FOR_PIRIOD, NEW_LIMIT_REFRESH_PERIOD);
-            
+            creditLineEntity.setCreditLineAuthorized(CreditLineUtils.calculateAvailableCreditLine(creditLineEntity));
+        }else{
+            creditLineEntity.setCreditLineAuthorized(BigDecimal.ZERO);
         }
         
-        
-        creditLineDAO.save(creditLineEntity);
-        
-        //TODO: Must return the response entity, with the accepted and creditLine authorized fields
-        return true;
+        return CreditLineUtils.createCreditLineDTO(creditLineDAO.save(creditLineEntity));
+    }
+
+    /**
+     * count if the last three registries on DB is not accepted
+     * @return
+     */
+    @Override
+    public Long countLastThreeIsNotAccepted(){
+        Long out = 0L;
+        List<CreditLineEntity> creditLineEntityList = creditLineDAO.findLastThree();
+        for (CreditLineEntity creditLineEntity : creditLineEntityList) {
+            out += ( !creditLineEntity.getAccepted() ? 1 : 0 );
+        }
+        return out;
     }
     
 }

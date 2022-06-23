@@ -29,7 +29,8 @@ public class CreditLineUtils {
             creditLineEntity.getMonthlyRevenue(),
             creditLineEntity.getRequestedCreditLine(),
             creditLineEntity.getRequestedDateTime(),
-            creditLineEntity.getAccepted()
+            creditLineEntity.getAccepted(),
+            creditLineEntity.getCreditLineAuthorized()
                                  );
         
         return creditLineDTO;

@@ -41,6 +41,9 @@ public class CreditLineEntity {
     @Nullable
     private Boolean accepted;
 
+    @Nullable
+    private BigDecimal creditLineAuthorized;
+
     public CreditLineEntity() {
     }
 
@@ -53,6 +56,7 @@ public class CreditLineEntity {
         this.requestedDateTime = requestedDateTime;
         this.requestedCreditLine =  requestedCreditLine;
         this.accepted = null;
+        this.creditLineAuthorized = null;
     }
 
     public CreditLineEntity(@NotNull String foundingType, @NotNull BigDecimal cashBalance,
@@ -64,6 +68,20 @@ public class CreditLineEntity {
         this.requestedDateTime = requestedDateTime;
         this.requestedCreditLine =  requestedCreditLine;
         this.accepted = accepted;
+        this.creditLineAuthorized = null;
+    }
+
+    public CreditLineEntity(Long id, @NotNull String foundingType, @NotNull BigDecimal cashBalance,
+            @NotNull BigDecimal monthlyRevenue, @NotNull BigDecimal requestedCreditLine,
+            @NotNull LocalDateTime requestedDateTime, Boolean accepted, BigDecimal creditLineAuthorized) {
+        Id = id;
+        this.foundingType = foundingType;
+        this.cashBalance = cashBalance;
+        this.monthlyRevenue = monthlyRevenue;
+        this.requestedCreditLine = requestedCreditLine;
+        this.requestedDateTime = requestedDateTime;
+        this.accepted = accepted;
+        this.creditLineAuthorized = creditLineAuthorized;
     }
 
     public Long getId() {
@@ -122,6 +140,15 @@ public class CreditLineEntity {
         this.accepted = accepted;
     }
 
+    public BigDecimal getCreditLineAuthorized() {
+        return creditLineAuthorized;
+    }
+
+    public void setCreditLineAuthorized(BigDecimal creditLineAuthorized) {
+        this.creditLineAuthorized = creditLineAuthorized;
+    }
+
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -129,6 +156,7 @@ public class CreditLineEntity {
         result = prime * result + ((Id == null) ? 0 : Id.hashCode());
         result = prime * result + ((accepted == null) ? 0 : accepted.hashCode());
         result = prime * result + ((cashBalance == null) ? 0 : cashBalance.hashCode());
+        result = prime * result + ((creditLineAuthorized == null) ? 0 : creditLineAuthorized.hashCode());
         result = prime * result + ((foundingType == null) ? 0 : foundingType.hashCode());
         result = prime * result + ((monthlyRevenue == null) ? 0 : monthlyRevenue.hashCode());
         result = prime * result + ((requestedCreditLine == null) ? 0 : requestedCreditLine.hashCode());
@@ -160,6 +188,11 @@ public class CreditLineEntity {
                 return false;
         } else if (!cashBalance.equals(other.cashBalance))
             return false;
+        if (creditLineAuthorized == null) {
+            if (other.creditLineAuthorized != null)
+                return false;
+        } else if (!creditLineAuthorized.equals(other.creditLineAuthorized))
+            return false;
         if (foundingType == null) {
             if (other.foundingType != null)
                 return false;
@@ -185,11 +218,12 @@ public class CreditLineEntity {
 
     @Override
     public String toString() {
-        return "CreditLineEntity [Id=" + Id + ", accepted=" + accepted + ", cashBalance=" + cashBalance 
-                + ", foundingType=" + foundingType + ", monthlyRevenue="
-                + monthlyRevenue + ", requestedCreditLine=" + requestedCreditLine + ", requestedDateTime="
-                + requestedDateTime + "]";
+        return "CreditLineEntity [Id=" + Id + ", accepted=" + accepted + ", cashBalance=" + cashBalance
+                + ", creditLineAuthorized=" + creditLineAuthorized + ", foundingType=" + foundingType
+                + ", monthlyRevenue=" + monthlyRevenue + ", requestedCreditLine=" + requestedCreditLine
+                + ", requestedDateTime=" + requestedDateTime + "]";
     }
 
+   
     
 }

@@ -40,19 +40,29 @@ public class CreditLineDTO {
     @Null
     private Boolean accepted;
 
-    public CreditLineDTO() {
-    }
+    @JsonProperty
+    @Null
+    private BigDecimal creditLineAuthorized;
+
 
     public CreditLineDTO(@NotNull @NotBlank String foundingType, @NotNull BigDecimal cashBalance,
             @NotNull BigDecimal monthlyRevenue, @NotNull BigDecimal requestedCreditLine, LocalDateTime requestedDate,
-            @Null Boolean accepted) {
+            @Null Boolean accepted, @Null BigDecimal creditLineAuthorized) {
         this.foundingType = foundingType;
         this.cashBalance = cashBalance;
         this.monthlyRevenue = monthlyRevenue;
         this.requestedCreditLine = requestedCreditLine;
         this.requestedDate = requestedDate;
         this.accepted = accepted;
+        this.creditLineAuthorized = creditLineAuthorized;
     }
+
+
+
+    public CreditLineDTO() {
+    }
+
+    
 
     public String getFoundingType() {
         return foundingType;
@@ -102,12 +112,22 @@ public class CreditLineDTO {
         this.accepted = accepted;
     }
 
+
+    public BigDecimal getCreditLineAuthorized() {
+        return creditLineAuthorized;
+    }
+
+    public void setCreditLineAuthorized(BigDecimal creditLineAuthorized) {
+        this.creditLineAuthorized = creditLineAuthorized;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((accepted == null) ? 0 : accepted.hashCode());
         result = prime * result + ((cashBalance == null) ? 0 : cashBalance.hashCode());
+        result = prime * result + ((creditLineAuthorized == null) ? 0 : creditLineAuthorized.hashCode());
         result = prime * result + ((foundingType == null) ? 0 : foundingType.hashCode());
         result = prime * result + ((monthlyRevenue == null) ? 0 : monthlyRevenue.hashCode());
         result = prime * result + ((requestedCreditLine == null) ? 0 : requestedCreditLine.hashCode());
@@ -134,6 +154,11 @@ public class CreditLineDTO {
                 return false;
         } else if (!cashBalance.equals(other.cashBalance))
             return false;
+        if (creditLineAuthorized == null) {
+            if (other.creditLineAuthorized != null)
+                return false;
+        } else if (!creditLineAuthorized.equals(other.creditLineAuthorized))
+            return false;
         if (foundingType == null) {
             if (other.foundingType != null)
                 return false;
@@ -159,9 +184,9 @@ public class CreditLineDTO {
 
     @Override
     public String toString() {
-        return "CreditLineDTO [accepted=" + accepted + ", cashBalance=" + cashBalance + ", foundingType=" + foundingType
-                + ", monthlyRevenue=" + monthlyRevenue + ", requestedCreditLine=" + requestedCreditLine
-                + ", requestedDate=" + requestedDate + "]";
+        return "CreditLineDTO [accepted=" + accepted + ", cashBalance=" + cashBalance + ", creditLineAuthorized="
+                + creditLineAuthorized + ", foundingType=" + foundingType + ", monthlyRevenue=" + monthlyRevenue
+                + ", requestedCreditLine=" + requestedCreditLine + ", requestedDate=" + requestedDate + "]";
     }
    
 }

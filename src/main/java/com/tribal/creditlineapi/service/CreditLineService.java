@@ -9,5 +9,7 @@ public interface CreditLineService {
     
     List<CreditLineDTO> getAll();
 
-    Boolean setCreditLine(CreditLineDTO creditLineDtoList);
+    CreditLineDTO setCreditLine(CreditLineDTO creditLineDtoList);
+
+    public Long countLastThreeIsNotAccepted();
 }

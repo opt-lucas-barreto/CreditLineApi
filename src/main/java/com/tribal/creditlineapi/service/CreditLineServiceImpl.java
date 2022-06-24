@@ -27,7 +27,7 @@ public class CreditLineServiceImpl implements CreditLineService{
     private static final int NEW_LIMIT_REFRESH_PERIOD = 20;
     */
 
-    /*@Autowired*/
+    //@Autowired
     private CreditLineDAO creditLineDAO;
 
     public CreditLineServiceImpl(CreditLineDAO creditLineDAO) {

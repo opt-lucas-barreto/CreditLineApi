@@ -5,6 +5,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,12 +26,9 @@ import io.github.bucket4j.ConsumptionProbe;
 @RequestMapping("/")
 public class CreditLineController {
     
-    private final CreditLineService creditLineService;
+    @Autowired
+    private CreditLineService creditLineService;
     Bucket bucketRateLimite = null; 
-
-    public CreditLineController(CreditLineService creditLineService){
-        this.creditLineService = creditLineService;
-    }
 
     @GetMapping
     public ResponseEntity<?> testServer(){
@@ -45,6 +44,7 @@ public class CreditLineController {
     public ResponseEntity<?> postCreditLine(@Valid @RequestBody CreditLineDTO creditLineDTO){
 
         ResponseEntityBody responseEntityBody = null;
+        
         if(bucketRateLimite == null || bucketRateLimite.tryConsume(1)){
             CreditLineDTO newCreditLine= this.creditLineService.setCreditLine(creditLineDTO);
             
@@ -58,9 +58,6 @@ public class CreditLineController {
             } 
             
             
-            System.out.println( "+++++getAvailableTokens: "+bucketRateLimite.getAvailableTokens());
-            
-            
             Long countLastThreeIsNotAccepted = this.creditLineService.countLastThreeIsNotAccepted();
             if(countLastThreeIsNotAccepted >= 3){
                 responseEntityBody = new ResponseEntityBody("A sales agent will contact you", BigDecimal.ZERO);
@@ -70,21 +67,24 @@ public class CreditLineController {
             
             if(newCreditLine !=null && newCreditLine.getAccepted()){            
 
-                System.out.println( "2+++++getAvailableTokens: "+bucketRateLimite.getAvailableTokens());
-
                 responseEntityBody = 
                     new ResponseEntityBody("The Credit Line was accept!", newCreditLine.getCreditLineAuthorized());
-                ResponseEntity<ResponseEntityBody> response = ResponseEntity.ok(responseEntityBody);
+                
+                final HttpHeaders responseHeaders = new HttpHeaders();
+                responseHeaders.set("X-RateLimit-Remaining", ""+bucketRateLimite.getAvailableTokens());
+                
+                ResponseEntity<ResponseEntityBody> response = new ResponseEntity<ResponseEntityBody>(responseEntityBody, responseHeaders, HttpStatus.OK);
                 return response;
 
             }else if(newCreditLine !=null && !newCreditLine.getAccepted()){
 
-                System.out.println( "2+++++getAvailableTokens: "+bucketRateLimite.getAvailableTokens());
-
                 responseEntityBody = 
                     new ResponseEntityBody("The Credit Line was NOT accept!", newCreditLine.getCreditLineAuthorized());
-                    ResponseEntity<ResponseEntityBody> response = ResponseEntity.ok(responseEntityBody);
-                    return response;
+                final HttpHeaders responseHeaders = new HttpHeaders();
+                responseHeaders.set("X-RateLimit-Remaining", ""+bucketRateLimite.getAvailableTokens());
+                
+                ResponseEntity<ResponseEntityBody> response = new ResponseEntity<ResponseEntityBody>(responseEntityBody, responseHeaders, HttpStatus.OK);
+                return response;
 
             }else{
 
@@ -92,12 +92,15 @@ public class CreditLineController {
 
             }
         }
-        System.out.println("++++++++++++++++Number of hits exceeded+++++++++++++");
-        ConsumptionProbe probe = bucketRateLimite.tryConsumeAndReturnRemaining(1);
-        System.out.println("Seconds to refresh: " + TimeUnit.NANOSECONDS.toSeconds(probe.getNanosToWaitForRefill()));
+                
         responseEntityBody = new ResponseEntityBody("Number of hits exceeded. Try Later", BigDecimal.ZERO);
         
-        ResponseEntity<ResponseEntityBody> response = new ResponseEntity<ResponseEntityBody>(responseEntityBody, HttpStatus.TOO_MANY_REQUESTS);
+        final HttpHeaders responseHeaders = new HttpHeaders();
+        ConsumptionProbe probe = bucketRateLimite.tryConsumeAndReturnRemaining(1);
+        responseHeaders.set("X-RateLimit-Reset", ""+TimeUnit.NANOSECONDS.toSeconds(probe.getNanosToWaitForRefill()));
+        
+        ResponseEntity<ResponseEntityBody> response = 
+            new ResponseEntity<ResponseEntityBody>(responseEntityBody, responseHeaders, HttpStatus.TOO_MANY_REQUESTS);
         
         return response;
                     

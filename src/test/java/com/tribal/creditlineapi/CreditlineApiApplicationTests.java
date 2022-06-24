@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class CreditlineApiApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void shouldAccepted() {
 	}
 
 }

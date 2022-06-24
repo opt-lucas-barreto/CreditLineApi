@@ -1,6 +1,7 @@
 package com.tribal.creditlineapi.utils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import com.tribal.creditlineapi.dto.CreditLineDTO;
 import com.tribal.creditlineapi.entity.CreditLineEntity;
@@ -50,13 +51,13 @@ public class CreditLineUtils {
         if(creditLineEntity.getFoundingType().equals(SME)){
 
             creditLineAvailable = 
-                creditLineEntity.getMonthlyRevenue().divide(BigDecimal.valueOf(5L));
+                creditLineEntity.getMonthlyRevenue().divide(BigDecimal.valueOf(5L),RoundingMode.HALF_EVEN).setScale(2);
 
         }else if(creditLineEntity.getFoundingType().equals(STARTUP)){
             BigDecimal creditLineMonthlyRevenue = 
-                creditLineEntity.getMonthlyRevenue().divide(BigDecimal.valueOf(5L));
+                creditLineEntity.getMonthlyRevenue().divide(BigDecimal.valueOf(5L),RoundingMode.HALF_EVEN).setScale(2);
             BigDecimal creditLineCashBalance = 
-                creditLineEntity.getMonthlyRevenue().divide(BigDecimal.valueOf(3L));
+                creditLineEntity.getCashBalance().divide(BigDecimal.valueOf(3L),RoundingMode.HALF_EVEN).setScale(2);
             creditLineAvailable = 
                 (creditLineMonthlyRevenue.compareTo(creditLineCashBalance) >= 0 ? creditLineMonthlyRevenue : creditLineCashBalance);
 

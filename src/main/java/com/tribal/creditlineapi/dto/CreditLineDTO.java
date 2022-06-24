@@ -16,20 +16,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class CreditLineDTO {
     
     @JsonProperty
-    @NotNull
+    @NotNull(message = "can't be null")
     @NotBlank
     private String foundingType;
 
     @JsonProperty
-    @NotNull
+    @NotNull(message = "can't be null")
     private BigDecimal cashBalance;
     
     @JsonProperty
-    @NotNull
+    @NotNull(message = "can't be null")
     private BigDecimal monthlyRevenue;
     
     @JsonProperty
-    @NotNull
+    @NotNull(message = "can't be null")
     private BigDecimal requestedCreditLine;
 
     @JsonProperty
